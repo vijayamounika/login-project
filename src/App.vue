@@ -1,24 +1,45 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div id="nav" v-if="isShow">
+      <router-link to="/Register">Register</router-link>|
+      <router-link to="/Login">Login</router-link>
+    </div>
+    <div v-else>
+      <span v-on:click="doLogout">Sign out</span>
+    </div>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { setToken } from "../axios.js";
 
 export default {
-  name: 'app',
-  components: {
-    HelloWorld
+  name: "App",
+  data() {
+    return {
+      isShow: true
+    };
+  },
+  methods: {
+    doLogout() {
+      this.isShow = true;
+      localStorage.removeItem("token");
+      setToken();
+      this.$router.push("/Login");
+    }
+  },
+  mounted() {
+    this.$root.$on("show-signout", data => {
+      this.isShow = data.loggedIn;
+    });
   }
-}
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
